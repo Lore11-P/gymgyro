@@ -101,7 +101,7 @@ function makeDefaultState(seed) {
   if (seed) {
     state.plan = [
       normalizeDay({
-        name: 'Giorno A · Spinta',
+        name: 'Giorno A - Spinta',
         exercises: [
           { name: 'Panca piana', sets: 4, reps: 8, rest: 90 },
           { name: 'Lento avanti', sets: 3, reps: 10, rest: 75 },
@@ -109,7 +109,7 @@ function makeDefaultState(seed) {
         ],
       }),
       normalizeDay({
-        name: 'Giorno B · Tirata',
+        name: 'Giorno B - Tirata',
         exercises: [
           { name: 'Lat machine', sets: 4, reps: 10, rest: 90 },
           { name: 'Rematore manubri', sets: 3, reps: 10, rest: 75 },
@@ -117,7 +117,7 @@ function makeDefaultState(seed) {
         ],
       }),
       normalizeDay({
-        name: 'Giorno C · Gambe',
+        name: 'Giorno C - Gambe',
         exercises: [
           { name: 'Squat', sets: 4, reps: 8, rest: 120 },
           { name: 'Affondi', sets: 3, reps: 12, rest: 90 },
@@ -386,7 +386,7 @@ function updateSensorUI() {
   const label = $('#sensorLabel');
   const dot = $('#sensorDot');
   const button = $('#sensorBtn');
-  if (label) label.textContent = sensor.active ? 'Sensore attivo — muoviti!' : 'Conta in automatico col movimento';
+  if (label) label.textContent = sensor.active ? 'Sensore attivo - muoviti!' : 'Conta in automatico col movimento';
   if (dot) dot.classList.toggle('on', sensor.active);
   if (button) {
     button.textContent = sensor.active ? 'Disattiva sensore' : 'Attiva sensore';
@@ -599,9 +599,9 @@ function normalizeImportedDays(obj) {
 function parsePlanText(text) {
   const lines = String(text).split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
   const exercises = [];
-  const re = /^(.+?)\s+(\d+)\s*[x×X]\s*(\d+)(?:\s+(?:rec(?:upero)?\s*)?(\d+)\s*s?)?$/i;
+  const re = /^(.+?)\s+(\d+)\s*[xxX]\s*(\d+)(?:\s+(?:rec(?:upero)?\s*)?(\d+)\s*s?)?$/i;
   for (const rawLine of lines) {
-    const line = rawLine.replace(/^[-•*·]\s*/, '').replace(/^\d+[.)]\s*/, '');
+    const line = rawLine.replace(/^[-x*]\s*/, '').replace(/^\d+[.)]\s*/, '');
     if (!line || line.charAt(0) === '#') continue;
     const match = line.match(re);
     if (!match) continue;
@@ -734,7 +734,7 @@ async function addDayFlow() {
   const name = await promptDialog({
     title: 'Nuovo giorno',
     label: 'Nome del giorno',
-    placeholder: 'es. Giorno A · Petto e tricipiti',
+    placeholder: 'es. Giorno A - Petto e tricipiti',
     confirmLabel: 'Crea',
   });
   if (!name) return;
@@ -922,7 +922,7 @@ function renderWorkout() {
     '</header>' +
     '<div class="wk-body">' +
     '<div class="wk-head">' +
-    '<p class="wk-step">Esercizio ' + (a.exerciseIndex + 1) + '/' + a.exercises.length + ' · Serie ' + setNo + '/' + ex.targetSets + '</p>' +
+    '<p class="wk-step">Esercizio ' + (a.exerciseIndex + 1) + '/' + a.exercises.length + ' - Serie ' + setNo + '/' + ex.targetSets + '</p>' +
     '<h2 class="wk-name">' + esc(ex.name) + '</h2>' +
     '<p class="wk-target">Obiettivo: ' + ex.targetReps + ' ripetizioni</p>' +
     '</div>' +
@@ -941,13 +941,13 @@ function renderWorkout() {
     '<div class="sensor-meter" id="sensorMeterWrap"><span id="sensorMeter"></span></div>' +
     '</div>' +
     '<div class="wk-actions">' +
-    '<button class="btn ghost minus" data-wk="minus" aria-label="Togli una ripetizione">−1</button>' +
+    '<button class="btn ghost minus" data-wk="minus" aria-label="Togli una ripetizione">-1</button>' +
     '<button class="btn primary plus" data-wk="plus">+1</button>' +
     '<button class="btn accent" data-wk="set">Fine serie</button>' +
     '</div>' +
     '<div class="wk-secondary">' +
     '<button class="text-btn" data-wk="skip">Salta esercizio</button>' +
-    '<span class="sep">·</span>' +
+    '<span class="sep">-</span>' +
     '<button class="text-btn danger" data-wk="delete">Elimina esercizio</button>' +
     '</div>' +
     '</div>' +
@@ -1371,7 +1371,7 @@ function renderToday() {
         '<div class="resume-top"><span class="pulse-dot"></span><span class="badge">In corso</span></div>' +
         '<h3>' + esc(active.dayName) + '</h3>' +
         '<p class="muted small">Iniziato alle ' + new Date(active.startedAt).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' }) +
-        ' · ' + Math.max(0, active.exercises.length - active.exerciseIndex) + ' esercizi rimasti</p>' +
+        ' - ' + Math.max(0, active.exercises.length - active.exerciseIndex) + ' esercizi rimasti</p>' +
         '<div class="row gap"><button class="btn primary" data-action="resume">Riprendi</button>' +
         '<button class="btn ghost" data-action="discardActive">Abbandona</button></div>' +
         '</section>'
@@ -1395,7 +1395,7 @@ function renderToday() {
               ? '<ul class="preview-list">' +
                 selectedDay.exercises.map((ex) =>
                   '<li><span class="preview-name">' + esc(ex.name) + '</span>' +
-                  '<span class="preview-meta">' + ex.sets + '×' + ex.reps + ' · rec ' + ex.rest + 's</span></li>'
+                  '<span class="preview-meta">' + ex.sets + 'x' + ex.reps + ' - rec ' + ex.rest + 's</span></li>'
                 ).join('') +
                 '</ul>'
               : '<p class="muted small empty-line">Nessun esercizio in questo giorno. Aggiungili dalla scheda.</p>') +
@@ -1411,12 +1411,12 @@ function renderToday() {
     (latest
       ? '<section class="last-card">' +
         '<h3>Ultimo allenamento</h3>' +
-        '<p class="muted">' + esc(latest.dayName) + ' · ' + fmtDate(latest.date) + '</p>' +
+        '<p class="muted">' + esc(latest.dayName) + ' - ' + fmtDate(latest.date) + '</p>' +
         '<div class="mini-stats">' +
         '<span><strong>' + totalRepsOf(latest) + '</strong> rip</span>' +
         '<span><strong>' + fmtDuration(latest.durationSec || 0) + '</strong></span>' +
         '</div>' +
-        '<button class="link-btn" data-action="tab" data-tab="history">Apri cronologia →</button>' +
+        '<button class="link-btn" data-action="tab" data-tab="history">Apri cronologia -</button>' +
         '</section>'
       : '');
 }
@@ -1450,7 +1450,7 @@ function renderPlan() {
                 '<li class="ex-row">' +
                 '<button class="ex-main" data-action="editExercise" data-day="' + day.id + '" data-id="' + ex.id + '">' +
                 '<span class="ex-name">' + esc(ex.name) + '</span>' +
-                '<span class="ex-meta">' + ex.sets + '×' + ex.reps + ' · recupero ' + ex.rest + 's</span>' +
+                '<span class="ex-meta">' + ex.sets + 'x' + ex.reps + ' - recupero ' + ex.rest + 's</span>' +
                 '</button>' +
                 '<button class="icon-btn danger" data-action="deleteExercise" data-day="' + day.id + '" data-id="' + ex.id + '" aria-label="Elimina esercizio">' + I.trash + '</button>' +
                 '</li>'
@@ -1480,7 +1480,7 @@ function renderHistory() {
     '<section class="hello">' +
     '<p class="eyebrow">Cronologia</p>' +
     '<h2>I tuoi allenamenti</h2>' +
-    '<p class="muted">' + (hist.length ? hist.length + ' allenamenti · ' + totals.reps + ' ripetizioni totali' : 'Qui troverai tutto quello che hai fatto.') + '</p>' +
+    '<p class="muted">' + (hist.length ? hist.length + ' allenamenti - ' + totals.reps + ' ripetizioni totali' : 'Qui troverai tutto quello che hai fatto.') + '</p>' +
     '</section>' +
     (hist.length
       ? '<div class="row gap wrap" style="margin-bottom:4px">' +
@@ -1502,7 +1502,7 @@ function renderHistory() {
             (w.exercises || []).map((ex) =>
               '<div class="hist-ex">' +
               '<div class="hist-ex-head"><span class="hist-ex-name">' + esc(ex.name) + '</span>' +
-              '<span class="hist-ex-tag ' + (ex.skipped ? 'skipped' : '') + '">' + (ex.skipped ? 'Saltato' : (ex.sets || []).length + '/' + (ex.targetSets || '—') + ' serie') + '</span></div>' +
+              '<span class="hist-ex-tag ' + (ex.skipped ? 'skipped' : '') + '">' + (ex.skipped ? 'Saltato' : (ex.sets || []).length + '/' + (ex.targetSets || '-') + ' serie') + '</span></div>' +
               '<div class="chips">' +
               ((ex.sets || []).length
                 ? ex.sets.map((set, i) => '<span class="chip">Serie ' + (i + 1) + ': ' + set.reps + ' rip</span>').join('')
@@ -1569,10 +1569,10 @@ function renderSettings() {
     '<li>Per usare accelerometro e giroscopio l\'app deve essere aperta via <strong>HTTPS</strong> (GitHub Pages, Netlify, ecc.) in Safari o dalla schermata Home.</li>' +
     '<li>Tocca <strong>Attiva sensore</strong> durante l\'allenamento e consenti il movimento quando richiesto.</li>' +
     '<li>Tieni l\'iPhone in tasca o al braccio: ogni oscillazione conta una ripetizione. Regola la sensibilità qui sopra.</li>' +
-    '<li>Per installarla: Safari → Condividi → <strong>Aggiungi alla schermata Home</strong>.</li>' +
+    '<li>Per installarla: Safari - Condividi - <strong>Aggiungi alla schermata Home</strong>.</li>' +
     '</ul>' +
     '</section>' +
-    '<p class="version">GymGyro · v1.0</p>';
+    '<p class="version">GymGyro - v1.0</p>';
   const range = $('#sensRange');
   range.addEventListener('input', () => {
     state.settings.sensitivity = clampInt(range.value, 1, 10, 5);
@@ -1667,7 +1667,7 @@ async function deleteWorkoutFlow(id) {
   if (!workout) return;
   const ok = await confirmDialog({
     title: 'Eliminare questo allenamento?',
-    text: workout.dayName + ' · ' + fmtDate(workout.date),
+    text: workout.dayName + ' - ' + fmtDate(workout.date),
     confirmLabel: 'Elimina',
     danger: true,
   });
