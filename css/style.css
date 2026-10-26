@@ -209,6 +209,10 @@ details[open] .chev{transform:rotate(90deg)}
 .theme-seg .seg-btn:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--line)}
 .theme-seg .seg-btn.sel{background:var(--accent);color:var(--accent-ink);box-shadow:var(--shadow-sm)}
 .seg-hint{margin:12px 0 0;font-size:11.5px;color:var(--muted);font-family:var(--mono)}
+.pv-h{margin:16px 0 6px;font-size:13px;font-weight:900;text-transform:uppercase;letter-spacing:.02em}
+.pv-h:first-of-type{margin-top:0}
+.pv-list{margin:0;padding-left:18px;color:var(--muted);font-size:12.5px;line-height:1.55;display:flex;flex-direction:column;gap:6px}
+.pv-list strong{color:var(--text)}
 .stack{display:flex;flex-direction:column;gap:14px}
 .file-btn{position:relative;overflow:hidden}
 .file-btn input{position:absolute;inset:0;opacity:0;cursor:pointer}

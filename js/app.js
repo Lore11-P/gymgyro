@@ -753,6 +753,34 @@ function exerciseDialog(dayId, exerciseId) {
   });
 }
 
+/* ---------------- privacy policy ---------------- */
+function openPrivacy() {
+  const backdrop = openModal(
+    '<div class="dialog">' +
+    '<h3>Privacy policy</h3>' +
+    '<p class="modal-text">Ultimo aggiornamento: 26 ottobre 2026. GymGyro funziona interamente sul tuo dispositivo.</p>' +
+    '<h4 class="pv-h">Nessun dato raccolto</h4>' +
+    '<ul class="pv-list"><li>Nessun dato personale raccolto, trasmesso o venduto.</li><li>Niente account, niente cookie di tracciamento, niente analytics, niente pubblicità.</li></ul>' +
+    '<h4 class="pv-h">Dati salvati solo sul tuo dispositivo</h4>' +
+    '<ul class="pv-list"><li>Scheda, cronologia e impostazioni sono salvate nel <strong>localStorage del browser</strong>, solo sul tuo dispositivo: mai inviate a nessun server.</li><li>Puoi cancellarli da Opzioni - "Cancella tutti i dati", o cancellando i dati del sito dal browser.</li></ul>' +
+    '<h4 class="pv-h">Sensori di movimento</h4>' +
+    '<ul class="pv-list"><li>Accelerometro e giroscopio vengono letti solo dopo il tuo consenso esplicito ("Attiva sensore" durante l\'allenamento).</li><li>Elaborati <strong>in tempo reale sul dispositivo</strong> per contare le ripetizioni: mai memorizzati, mai inviati.</li><li>Puoi revocare il permesso in qualsiasi momento dalle impostazioni di Safari / iOS.</li></ul>' +
+    '<h4 class="pv-h">Servizi di terze parti</h4>' +
+    '<ul class="pv-list"><li>Hosting: <strong>GitHub Pages</strong> (GitHub, Inc. / Microsoft), che può trattare dati tecnici di accesso secondo la propria informativa. L\'app non aggiunge cookie né tracker di alcun tipo.</li></ul>' +
+    '<h4 class="pv-h">Esportazione dei dati</h4>' +
+    '<ul class="pv-list"><li>Esportare scheda, cronologia o backup crea file sul tuo dispositivo o li condivide solo con le app che scegli tu.</li></ul>' +
+    '<div class="modal-actions">' +
+    '<button type="button" class="btn ghost" data-modal="privacyClose">Chiudi</button>' +
+    '<a class="btn primary" href="privacy.html" rel="noopener" data-modal="privacyLink">Pagina completa</a>' +
+    '</div>' +
+    '</div>',
+    { wide: true }
+  );
+  backdrop.addEventListener('click', (event) => { if (event.target === backdrop) closeModal(); });
+  backdrop.querySelector('[data-modal="privacyClose"]').addEventListener('click', () => closeModal());
+  backdrop.querySelector('[data-modal="privacyLink"]').addEventListener('click', () => closeModal());
+}
+
 /* ---------------- azioni scheda ---------------- */
 async function addDayFlow() {
   const name = await promptDialog({
@@ -1602,8 +1630,10 @@ function renderSettings() {
     '<li>Per usare accelerometro e giroscopio l\'app deve essere aperta via <strong>HTTPS</strong> (GitHub Pages, Netlify, ecc.) in Safari o dalla schermata Home.</li>' +
     '<li>Tocca <strong>Attiva sensore</strong> durante l\'allenamento e consenti il movimento quando richiesto.</li>' +
     '<li>Tieni l\'iPhone in tasca o al braccio: ogni oscillazione conta una ripetizione. Regola la sensibilità qui sopra.</li>' +
-    '<li>Per installarla: Safari - Condividi - <strong>Aggiungi alla schermata Home</strong>.</li>' +
+    '<li>Per installarla: Safari - Condividi - <strong>Aggiungi alla schermata Home</strong>.' +
+    '</li>' +
     '</ul>' +
+    '<button class="link-btn" data-action="privacy" style="margin-top:12px">Privacy policy</button>' +
     '</section>' +
     '<p class="version">GymGyro - v1.1</p>';
   const range = $('#sensRange');
@@ -1742,6 +1772,7 @@ const actions = {
   clearHistory: () => clearHistoryFlow(),
   backup: () => exportBackup(),
   clearAll: () => clearAllFlow(),
+  privacy: () => openPrivacy(),
   setTheme: (btn) => {
     const value = btn.dataset.value;
     if (['system', 'light', 'dark'].indexOf(value) === -1) return;
