@@ -94,7 +94,7 @@ function makeDefaultState(seed) {
     version: 1,
     plan: [],
     history: [],
-    settings: { sensitivity: 5, sound: true, vibration: true, keepAwake: true, theme: 'system' },
+    settings: { sensitivity: 5, sound: true, vibration: true, keepAwake: true, theme: 'system', privacyAccepted: false },
     ui: { lastTab: 'today', lastDayId: null },
     active: null,
   };
@@ -818,6 +818,35 @@ function openPrivacy() {
   backdrop.addEventListener('click', (event) => { if (event.target === backdrop) closeModal(); });
   backdrop.querySelector('[data-modal="privacyClose"]').addEventListener('click', () => closeModal());
   backdrop.querySelector('[data-modal="privacyLink"]').addEventListener('click', () => closeModal());
+}
+
+/* consenso privacy mostrato all'ingresso nella pagina, finché non si accetta */
+function showPrivacyConsent() {
+  if (state.settings.privacyAccepted) return;
+  const backdrop = openModal(
+    '<div class="dialog">' +
+    '<h3>Privacy policy</h3>' +
+    '<p class="modal-text">Prima di iniziare, in sintesi:</p>' +
+    '<ul class="pv-list">' +
+    '<li><strong>Nessun dato raccolto</strong>: niente account, niente cookie di tracciamento, niente analytics, niente pubblicità.</li>' +
+    '<li><strong>Tutto resta sul tuo dispositivo</strong>: scheda, cronologia e impostazioni nel localStorage del browser, mai inviate a server.</li>' +
+    '<li><strong>Sensori</strong>: attivi solo con il tuo consenso durante l\'allenamento, elaborati in tempo reale e mai memorizzati.</li>' +
+    '<li><strong>Hosting GitHub Pages</strong> (GitHub, Inc. / Microsoft): può trattare dati tecnici di accesso secondo la propria informativa.</li>' +
+    '</ul>' +
+    '<p class="modal-text">Puoi rileggere la policy completa in ogni momento dalle Opzioni.</p>' +
+    '<div class="modal-actions">' +
+    '<a class="btn ghost" href="privacy.html" rel="noopener">Leggi tutto</a>' +
+    '<button type="button" class="btn primary" id="privacyAccept">Accetto</button>' +
+    '</div>' +
+    '</div>',
+    { wide: true }
+  );
+  /* il consenso è obbligatorio: il tocco sul fondale non chiude */
+  $('#privacyAccept').addEventListener('click', () => {
+    state.settings.privacyAccepted = true;
+    persist();
+    closeModal();
+  });
 }
 
 /* ---------------- azioni scheda ---------------- */
@@ -1876,6 +1905,8 @@ function render() {
 window.addEventListener('pointerdown', () => ensureAudio(), { once: true, capture: true });
 
 applyTheme();
+
+showPrivacyConsent();
 
 if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
   window.addEventListener('load', () => {
