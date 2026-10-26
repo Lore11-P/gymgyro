@@ -7,7 +7,21 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="GymGyro">
-  <meta name="theme-color" content="#080b10">
+  <meta name="theme-color" content="#f2efe4">
+  <script>
+    (function () {
+      var t = null;
+      try {
+        var raw = localStorage.getItem('gymgyro_v1');
+        if (raw) {
+          var s = JSON.parse(raw).settings;
+          if (s && typeof s.theme === 'string') t = s.theme;
+        }
+      } catch (e) { /* ignora */ }
+      var dark = t === 'dark' || ((t === null || t === 'system') && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+    })();
+  </script>
   <meta name="format-detection" content="telephone=no">
   <meta name="description" content="GymGyro - conta le ripetizioni con accelerometro e giroscopio dell'iPhone, gestisce recuperi, scheda e cronologia.">
   <title>GymGyro</title>

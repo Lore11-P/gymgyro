@@ -94,7 +94,7 @@ function makeDefaultState(seed) {
     version: 1,
     plan: [],
     history: [],
-    settings: { sensitivity: 5, sound: true, vibration: true, keepAwake: true },
+    settings: { sensitivity: 5, sound: true, vibration: true, keepAwake: true, theme: 'system' },
     ui: { lastTab: 'today', lastDayId: null },
     active: null,
   };
@@ -172,6 +172,7 @@ function loadState() {
   } catch (err) { state = null; }
   if (!state) state = makeDefaultState(true);
   state.settings.sensitivity = clampInt(state.settings.sensitivity, 1, 10, 5);
+  if (['system', 'light', 'dark'].indexOf(state.settings.theme) === -1) state.settings.theme = 'system';
   if (['today', 'plan', 'history', 'settings'].indexOf(state.ui.lastTab) === -1) state.ui.lastTab = 'today';
   state.firstRun = firstRun;
   return state;
@@ -179,6 +180,29 @@ function loadState() {
 
 let state = loadState();
 let activeTab = state.ui.lastTab || 'today';
+
+/* ---------------- tema (chiaro/scuro/sistema) ---------------- */
+const THEME_COLOR = { light: '#f2efe4', dark: '#161513' };
+const darkSchemeQuery = (window.matchMedia) ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+let darkSchemeListener = null;
+
+function resolvedTheme() {
+  const t = state.settings.theme;
+  if (t === 'light' || t === 'dark') return t;
+  return (darkSchemeQuery && darkSchemeQuery.matches) ? 'dark' : 'light';
+}
+
+function applyTheme() {
+  const theme = resolvedTheme();
+  document.documentElement.setAttribute('data-theme', theme);
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', THEME_COLOR[theme]);
+  if (darkSchemeQuery && !darkSchemeListener) {
+    darkSchemeListener = () => { if (state.settings.theme === 'system') applyTheme(); };
+    if (typeof darkSchemeQuery.addEventListener === 'function') darkSchemeQuery.addEventListener('change', darkSchemeListener);
+    else if (typeof darkSchemeQuery.addListener === 'function') darkSchemeQuery.addListener(darkSchemeListener);
+  }
+}
 
 let persistTimer = null;
 let toastTimer = null;
@@ -1536,6 +1560,15 @@ function renderSettings() {
     '<p class="muted">Regola la sensibilità del contatore e gestisci i tuoi dati.</p>' +
     '</section>' +
     '<section class="card">' +
+    '<div class="card-head"><h3>Tema</h3><span class="badge">Neobrutal</span></div>' +
+    '<div class="theme-seg" id="themeSeg">' +
+    '<button class="seg-btn' + (s.theme === 'system' ? ' sel' : '') + '" data-action="setTheme" data-value="system">Auto</button>' +
+    '<button class="seg-btn' + (s.theme === 'light' ? ' sel' : '') + '" data-action="setTheme" data-value="light">Chiaro</button>' +
+    '<button class="seg-btn' + (s.theme === 'dark' ? ' sel' : '') + '" data-action="setTheme" data-value="dark">Scuro</button>' +
+    '</div>' +
+    '<p class="seg-hint">Auto: l\'app segue il tema del dispositivo.</p>' +
+    '</section>' +
+    '<section class="card">' +
     '<div class="card-head"><h3>Sensibilità sensori</h3><span class="badge" id="sensValue">' + s.sensitivity + '/10</span></div>' +
     '<p class="muted small" style="margin:0 0 6px">Più alta = il telefono conta più facilmente. Se conta troppe ripetizioni, abbassala.</p>' +
     '<input id="sensRange" class="range" type="range" min="1" max="10" step="1" value="' + s.sensitivity + '" aria-label="Sensibilità sensori">' +
@@ -1572,7 +1605,7 @@ function renderSettings() {
     '<li>Per installarla: Safari - Condividi - <strong>Aggiungi alla schermata Home</strong>.</li>' +
     '</ul>' +
     '</section>' +
-    '<p class="version">GymGyro - v1.0</p>';
+    '<p class="version">GymGyro - v1.1</p>';
   const range = $('#sensRange');
   range.addEventListener('input', () => {
     state.settings.sensitivity = clampInt(range.value, 1, 10, 5);
@@ -1625,6 +1658,7 @@ async function restoreBackup(file) {
     active: null,
   };
   state.settings.sensitivity = clampInt(state.settings.sensitivity, 1, 10, 5);
+  if (['system', 'light', 'dark'].indexOf(state.settings.theme) === -1) state.settings.theme = 'system';
   activeTab = 'today';
   persist();
   render();
@@ -1708,6 +1742,15 @@ const actions = {
   clearHistory: () => clearHistoryFlow(),
   backup: () => exportBackup(),
   clearAll: () => clearAllFlow(),
+  setTheme: (btn) => {
+    const value = btn.dataset.value;
+    if (['system', 'light', 'dark'].indexOf(value) === -1) return;
+    state.settings.theme = value;
+    persist();
+    applyTheme();
+    $$('#themeSeg .seg-btn').forEach((seg) => seg.classList.toggle('sel', seg.dataset.value === value));
+    toast(value === 'system' ? 'Tema: automatico' : (value === 'dark' ? 'Tema: scuro' : 'Tema: chiaro'));
+  },
 };
 
 document.addEventListener('click', (event) => {
@@ -1761,6 +1804,8 @@ function render() {
 
 /* ---------------- avvio ---------------- */
 window.addEventListener('pointerdown', () => ensureAudio(), { once: true, capture: true });
+
+applyTheme();
 
 if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
   window.addEventListener('load', () => {
