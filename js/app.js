@@ -268,9 +268,48 @@ function beep(freq, duration, delay, gain, wave) {
 
 function vibrate(pattern) {
   if (!state.settings.vibration) return;
+  let native = false;
   if (typeof navigator.vibrate === 'function') {
-    try { navigator.vibrate(pattern); } catch (err) { /* ignora */ }
+    try { native = navigator.vibrate(pattern); } catch (err) { native = false; }
   }
+  /* iOS Safari non espone navigator.vibrate: escamotage = buzz audio
+     (onde quadre basse che fanno vibrare fisicamente lo speaker) */
+  if (!native && (('ontouchstart' in window) || (navigator.maxTouchPoints > 0))) buzz(pattern);
+}
+
+/* buzz tattile simulato: le onde quadre basse fanno "vibrare" lo speaker */
+function buzz(pattern) {
+  try {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    if (!audioCtx) audioCtx = new AC();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    const seq = Array.isArray(pattern) ? pattern : [pattern];
+    let t = audioCtx.currentTime + 0.02;
+    seq.forEach((ms, i) => {
+      const dur = Math.max(10, Math.min(600, Number(ms) || 0)) / 1000;
+      if (i % 2 === 0 && dur > 0) buzzPulse(t, dur);
+      t += dur;
+    });
+  } catch (err) { /* ignora */ }
+}
+
+function buzzPulse(start, dur) {
+  try {
+    const osc = audioCtx.createOscillator();
+    const amp = audioCtx.createGain();
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(58, start);
+    amp.gain.setValueAtTime(0.0001, start);
+    amp.gain.linearRampToValueAtTime(0.42, start + 0.006);
+    const hold = Math.max(start + 0.006, start + dur - 0.008);
+    amp.gain.setValueAtTime(0.42, hold);
+    amp.gain.linearRampToValueAtTime(0.0001, start + dur);
+    osc.connect(amp);
+    amp.connect(audioCtx.destination);
+    osc.start(start);
+    osc.stop(start + dur + 0.02);
+  } catch (err) { /* ignora */ }
 }
 
 function alertRestEnd() {
@@ -1608,7 +1647,7 @@ function renderSettings() {
     '<label class="switch"><input id="setSound" type="checkbox" ' + (s.sound ? 'checked' : '') + ' aria-label="Suono"><span></span></label>' +
     '</div>' +
     '<div class="setting-row">' +
-    '<div><h3>Vibrazione</h3><p class="muted small">Su iPhone Safari non la espone alle web app: l\'app avvisa con suono e flash</p></div>' +
+    '<div><h3>Vibrazione</h3><p class="muted small">Nativa su Android; su iPhone usa l\'escamotage audio: burst di basse frequenze che fanno vibrare lo speaker (audibile come buzz)</p></div>' +
     '<label class="switch"><input id="setVibration" type="checkbox" ' + (s.vibration ? 'checked' : '') + ' aria-label="Vibrazione"><span></span></label>' +
     '</div>' +
     '<div class="setting-row">' +
