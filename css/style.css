@@ -1,9 +1,9 @@
 /* GymGyro - stile NEOBRUTALISTA
    Bordi neri spessi, ombre dure senza blur, colori accesi, angoli netti */
 :root{
-  --bg:#f2efe4;
-  --bg-soft:#e6e1cd;
-  --card:#fbf5e4;
+  --bg:#f4f1e5;
+  --bg-soft:#ece7d4;
+  --card:#fdfaef;
   --card-2:#fffef8;
   --line:#111111;
   --text:#111111;
@@ -20,7 +20,7 @@
   --ink-accent:#c8f31d;
   --modal-bg:#fcf2d8;
   --rest-bg:#dff0f2;
-  --field-bg:#fefbf2;
+  --field-bg:#fffdf6;
   --field-focus-bg:#fffbe0;
   --track:#111111;
   --shadow-c:#111111;
@@ -132,7 +132,9 @@ svg{display:block;stroke-width:2.4}
 .day-pill:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--line)}
 .day-pill-name{font-weight:900;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-transform:uppercase}
 .day-pill-meta{font-size:11px;color:var(--muted);font-family:var(--mono)}
-.day-pill.selected{background:var(--accent);box-shadow:6px 6px 0 var(--line);transform:rotate(-1deg)}
+.day-pill.selected{background:var(--accent);color:var(--accent-ink);box-shadow:6px 6px 0 var(--line);transform:rotate(-1deg)}
+.day-pill.selected .day-pill-name{color:var(--accent-ink)}
+.day-pill.selected .day-pill-meta{color:rgba(17,17,17,.6)}
 .block{display:block}
 .day-preview .preview-list{list-style:none;margin:0 0 14px;padding:0;display:flex;flex-direction:column;gap:8px}
 .day-preview .preview-list li{display:flex;justify-content:space-between;gap:10px;align-items:baseline;background:var(--bg-soft);border:2px solid var(--line);border-radius:var(--radius);padding:10px 12px}
@@ -147,6 +149,7 @@ svg{display:block;stroke-width:2.4}
 .resume-card h3{margin:0 0 4px;font-size:23px;letter-spacing:-.02em;font-weight:900;text-transform:uppercase}
 .resume-card .row{margin-top:16px}
 .resume-card .btn{box-shadow:4px 4px 0 #111}
+.resume-card .btn.primary{background:#fffef7;color:#111}
 
 .last-card{background:var(--cyan);border:3px solid var(--line);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow-md)}
 .last-card h3{margin:0 0 4px;font-size:14px;font-weight:900;text-transform:uppercase;font-family:var(--mono)}
