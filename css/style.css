@@ -31,22 +31,24 @@
   --mono:ui-monospace,SFMono-Regular,SFMono-Regular,Menlo,Consolas,monospace;
 }
 :root[data-theme="dark"]{
-  --bg:#161513;
-  --bg-soft:#292722;
-  --card:#1f1e1a;
-  --card-2:#1f1e1a;
-  --line:#f2efe4;
-  --text:#f2efe4;
-  --muted:#b5af99;
-  --dot:rgba(242,239,228,.11);
-  --ink-bg:#f2efe4;
-  --ink-fg:#161513;
-  --ink-accent:#161513;
-  --field-bg:#181713;
-  --field-focus-bg:#333018;
-  --track:#f2efe4;
-  --shadow-c:#f2efe4;
+  --bg:#131210;
+  --bg-soft:#262420;
+  --card:#1d1b18;
+  --card-2:#1d1b18;
+  --line:#e9e4d4;
+  --text:#f5f2e8;
+  --muted:#a8a28f;
+  --dot:rgba(200,243,29,.09);
+  --ink-bg:#f5f2e8;
+  --ink-fg:#131210;
+  --ink-accent:#131210;
+  --field-bg:#191713;
+  --field-focus-bg:#33301a;
+  --track:#e9e4d4;
+  --shadow-c:#35322b;
 }
+:root[data-theme="dark"] .modal-backdrop{background:rgba(0,0,0,.72)}
+:root[data-theme="dark"] .rest-overlay{background:rgba(0,0,0,.85)}
 *,*::before,*::after{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{-webkit-text-size-adjust:100%}
 body{
